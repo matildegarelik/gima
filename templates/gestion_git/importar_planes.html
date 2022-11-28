@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %} GIMA {% endblock %}
+{% block content %}
+
+<div class= 'container'>
+  <div class="row">
+    <div class="col-3">
+    </div>
+    <div class="col-6">
+      <br>
+      <br>
+      <br>
+      <div class="card-header bg-secondary text-center text-white">
+        <h4>Importar Planes de Pago</h4>
+      </div>
+      <div class="card align-items-center bg-light border border-dark">
+        <br>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" name="importData">
+          <p>Elija el formato deseado.</p>
+          <select name="file-format" class="form-control my-3">
+            <option selected>elegir formato...</option>
+            <option>CSV</option>
+            <option>JSON</option>
+          </select>
+          <button class="btn btn-primary" type="submit">Importar</button>
+        </form>
+
+<a href="{% url 'git:users' %}">Volver</a>
+
+{% endblock %} 

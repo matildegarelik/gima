@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3>Cargar Nuevo Embargo</h3>
+        </div>
+    </div>
+</div>    
+    <br/>    
+
+{% if submitted %}
+<div class="container-sm">
+    <div class="card">
+        <div class="card-header">
+            <h5>El embargo fue cargado en forma Exitosa!</h5>
+        </div>
+    </div>
+</div>    
+        {% else %}
+        <div class="container-fluid">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class='col-md-12'>
+                        <div class="form-row">
+                            <div class="form-group col-md-2">
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{ form_embargo.seccion | as_crispy_field }}
+                                {{ form_embargo.tipo_de_embargo | as_crispy_field }}
+                                <br>
+                                {{ form_embargo.fecha_acreditacion | as_crispy_field }}
+                                {{ form_embargo.oficio_embargo | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{ form_embargo.adjudicacion | as_crispy_field }}
+                                {{ form_embargo.clase_embargo | as_crispy_field }}
+                                <br>
+                                {{ form_embargo.fecha_pedido_levantamiento | as_crispy_field }}                                 
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{ form_embargo.fecha_pedido_git | as_crispy_field }}
+                                {{ form_embargo.estado | as_crispy_field }}
+                                <br>
+                                {{ form_embargo.fecha_levantamiento_git | as_crispy_field }}
+                                {{ form_embargo.oficio_lev_embargo | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{ form_embargo.monto_embargado | as_crispy_field }}
+                                {{ form_embargo.orden_levantamiento | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <input type = "submit" value="Cargar" class = "btn btn-secondary">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>        
+            </form>
+        </div>
+    </div>
+       
+        
+{% endif %}
+<br>
+   
+
+{% endblock %} 

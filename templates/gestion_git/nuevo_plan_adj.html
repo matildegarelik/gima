@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3>Cargar Nuevo Plan</h3>
+        </div>
+    </div>
+</div>        
+<br/>
+
+{% if submitted %}
+
+<div class="container-sm">
+    <div class="card">
+        <div class="card-header">
+            <h5>La operación se realizó con éxito!</h5>
+        </div>
+    </div>
+</div>        
+        {% else %}
+        <div class="container-fluid">
+            <form action="" method="POST" enctype="multipart/form-data" multiple>
+                {% csrf_token %}
+                <div class="row">
+                    <div class='col-md-12'>
+                        <div class="form-row">
+                            <div class="form-group col-md-1">
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{ form_plan.seccion | as_crispy_field }}
+                                {{ form_plan.modalidad_de_pago | as_crispy_field }}
+                                {{ form_plan.cuotas_de_honorarios | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{ form_plan.adjudicacion | as_crispy_field }}
+                                {{ form_plan.cantidad_de_cuotas_plan | as_crispy_field }}
+                                {{ form_plan.honorarios_mandatario | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{ form_plan.fecha_de_suscripcion | as_crispy_field }}
+                                {{ form_plan.email | as_crispy_field }}
+                                {{ form_plan.honorarios_procuracion | as_crispy_field }}                              
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{ form_plan.imp_actualizado | as_crispy_field }}
+                                {{ form_plan.celular | as_crispy_field }}
+                                {{form_plan.fecha_de_pago_honorarios | as_crispy_field }}  
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{ form_plan.estado_del_plan | as_crispy_field }}                               
+                                {{ form_plan.archivo_plan | as_crispy_field }}
+                                {{ form_plan.comprobantes | as_crispy_field }} 
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <input type = "submit" value="Cargar" class = "btn btn-secondary">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </form>
+        </div>
+
+{% endif %}
+        
+
+
+{% endblock %} 

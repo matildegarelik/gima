@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+{% load crispy_forms_tags %}
+  
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-md-12"><h2>Gestión de Embargos Mandatario: {{lista_datos.nombre}} {{lista_datos.apellido}}</h2></div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm">
+                <div class="card text-center text-white bg-info" style="max-width: 18rem;">
+                    <div class="card-header"><h5>Total Embargos</h5></div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{total_embargos}}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="card text-center text-white bg-danger" style="max-width: 18rem;">
+                    <div class="card-header"><h5>Embargos Trabados</h5></div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{embargo_trabado}}</h5>
+                    </div>
+                </div>
+            </div>    
+            <div class="col-sm">
+                <div class="card text-center text-white bg-success mb-3" style="max-width: 18rem;">
+                    <div class="card-header"><h5>Embargos Levantados </h5></div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{embargo_levantado}}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>      
+<br>
+<div class="container border border-dark bg-light p-3">
+    <form method="get" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class='col-md-12'>
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        {{filtro_exped_embargo.form.estado|as_crispy_field}}
+                    </div>
+                    <div class="form-group col-md-2">
+                        {{filtro_exped_embargo.form.clase_embargo|as_crispy_field}}
+                    </div>
+                    <div class="form-group col-md-">
+                        {{filtro_exped_embargo.form.dia_ingreso_embargo_desde|as_crispy_field}}
+                    </div>
+                    <div class="form-group col-md-2">
+                        {{filtro_exped_embargo.form.dia_ingreso_embargo_hasta|as_crispy_field}}
+                    </div>
+                    <div class="form-group col-md-1">
+                        <div>
+                            <br>
+                        </div>
+                        <input type = "submit" value="Buscar" class = "btn btn-secondary">
+                    </div>
+                </div>
+                <a href="{% url 'git:exportar_embargos' %}">Descargar Embargos</a>
+            </div>
+        </div>
+    </form>
+</div>
+<br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr class= "table-active text-center">
+                        <th scope = "col">Demandado</th>
+                        <th scope = "col">Adjudicación</th>
+                        <th scope = "col">Inscripto</th>
+                        <th scope = "col">Monto Embargado</th>
+                        <th scope = "col">Tipo Embargo</th>
+                        <th scope = "col">Estado</th>
+                        <th scope = "col">Fecha de Ingreso</th>
+                        <th scope = "col">Orden de Lev.</th>
+                        <th scope = "col">Fecha carga Lev.GIT</th>
+                        <th scope="col">Ofic. Levantamiento</th>
+                        <th scope = "col">Plan de Pagos</th>
+                        <th colspan = "2">Edición</th>   
+                    </tr>
+                </thead>
+            <tbody>
+                {% for embargo in embargos_seccion %}
+                <tr>
+                    <td class="align-middle text-left">{{embargo.adjudicacion.apellido_nombre}}</td>
+                    <td class="align-middle text-center">{{embargo.adjudicacion.adjudicacion}}</a></td>
+                    <td class="align-middle text-center">{{embargo.adjudicacion.nro_inscripto}}</td>
+                    <td class="align-middle text-center"> $ {{embargo.monto_embargado}}</td>
+                    <td class="align-middle text-center">{{embargo.tipo_de_embargo}}</td>
+                    <td class="align-middle text-center">{{embargo.estado}}</td>
+                    <td class="align-middle text-center">{{embargo.fecha_pedido_git|date:"SHORT_DATE_FORMAT"}}</td>
+                    <td class="align-middle text-center">{{embargo.orden_levantamiento}}</td>
+                    <td class="align-middle text-center">{{embargo.fecha_levantamiento_git|date:"SHORT_DATE_FORMAT"}}</td>
+                    <td class="align-middle text-center"><a href="/media/{{embargo.oficio_lev_embargo}}" target= "_blank" class= "btn btn-outline-success btn-sm"> Ver oficio</a></td> 
+                    <td class="align-middle text-center">{{embargo.adjudicacion.planes_de_pago.estado_del_plan}}</td>
+                    <td class="align-middle text-center"><a class="btn btn-primary btn-sm" href="{% url 'git:actualizar_embargo' embargo.id%}">Actualizar</a></button></td>
+                    <td class="align-middle text-center"><a class="btn btn-danger btn-sm" href="{% url 'git:eliminar_embargo' embargo.id%}">Eliminar</a></button></td>
+                {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<br>
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if embargos_seccion.has_previous %}
+        <li class="page-item"><a class="page-link" href= "?page=1">&laquo Primera</a></li>
+        <li class="page-item"><a class="page-link" href= "?page={{embargos_seccion.previous_page_number}}">Previa</a></li>
+        {% endif %}
+        
+
+        <li class="page-item disabled"><a href="#" class= "page-link">Página {{ embargos_seccion.number }} of 
+            {{ embargos_seccion.paginator.num_pages }}</a></li>
+        
+        {% if embargos_seccion.has_next %}
+        <li class="page-item"><a class="page-link" href= "?page= {{embargos_seccion.next_page_number }}">Siguiente</a></li>
+        <li class="page-item"><a class="page-link"href= "?page={{ embargos_seccion.paginator.num_pages }}"> Última &raquo </a></li>
+        {% endif %}
+    </ul> 
+</nav>   
+
+<br>
+
+{% endblock %} 

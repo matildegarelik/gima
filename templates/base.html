@@ -1,0 +1,82 @@
+{% load static %}
+<style>
+  .msj-bienvenida{
+    font-size: 18px;
+    color: rgb(255, 255, 255);
+    margin-right: 20px;
+  }
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content = 'width'=device-width, initial-scale="1.0">
+      <title>{%block titlte %} GIMA {% endblock %}</title>
+      <!--Bootstrap CSS-->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+      <!--custom css & js-->
+      <link rel="stylesheet" href="{% static 'admin/css/vendor/select2/select2.css' %}">
+      <link rel="stylesheet" href="{% static 'admin/css/autocomplete.css' %}" />
+            
+      <!--Dropzone-->
+      <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+      <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+       
+    
+    </head>
+    <body>
+      <br>
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'git:secciones'%}">GIMA</a>
+          
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              {% if request.user.is_staff%}
+              <li class="nav-item active">
+                <a class="nav-link" href="{% url 'git:secciones'%}">Mandatarios <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'git:planes'%}">Planes</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'git:embargos'%}">Embargos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'git:expediente_git_global'%}">Expedientes GIT</a>
+              </li>
+              {%endif%}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'git:cbu_contribuyentes'%}">Consulta CBU</a>
+              </li>
+            </ul>
+          </div>
+          <span class="msj-bienvenida">Bienvenido, {{request.user.first_name}} {{request.user.last_name}}</span>
+          <span><a class= "msj-bienvenida" href="{% url 'git:login' %}">Cerrar cesión</a></span>
+        </nav>
+        <br>
+      </div>
+    </div>
+    </body>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+
+<script src= "{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+<script src="{% static 'admin/js/vendor/select2/select2.full.js' %}"></script>
+<script src="{% static 'admin/js/jquery.init.js' %}"></script>
+<script src="{% static 'admin/js/autocomplete.js' %}"></script>
+
+</html>
+{% block content %}
+{% endblock %}
+            

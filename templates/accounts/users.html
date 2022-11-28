@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<br>
+<div class=" container-sm container-fluid">
+<h4>Gestión de Expedientes Mandatario: {{lista_datos.nombre}} {{lista_datos.apellido}} </h4>
+</div>
+<br>
+<div class="row">
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-3">
+    <div class="card bg-light text-center">
+      <div class="card-body">
+        <h5 class="card-title"><strong>Total Expedientes</strong></h5>
+        <p><h5>{{contar_expe}}</h5></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="card bg-light card text-center">
+      <div class="card-body">
+        <h5 class="card-title"><strong>Planes Suscriptos</strong></h5>
+        <a class="btn btn-outline-success" href="{% url 'git:planes_sec' user.seccion%}"><strong> Planes: {{contar_planes}}</strong></a></button>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="card bg-light card text-center">
+      <div class="card-body">
+        <h5 class="card-title"><strong>Embargos Trabados</strong> </h5>
+        <a class="btn btn-outline-danger" href="{% url 'git:embargos_sec' user.seccion%}"><strong> Embargos: {{contar_embargos}}</strong></a></button></li>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<div class="container-fluid">
+  <div class="pos-f-t">
+      <div class="collapse" id="navbarToggleExternalContent">
+          <div class="bg-light p-4">
+              <div class="container-fluid">
+                <form method="get" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class='col-md-12'>
+                            <div class="form-row">
+                                  <div class="form-group col-md-1">
+                                  </div>
+                                    <div class="form-group col-md-1">
+                                      {{ filtro_exped_git.form.cuit | as_crispy_field }}
+                                  </div>
+                                  <div class="form-group col-md-2">
+                                      {{ filtro_exped_git.form.apellido_nombre | as_crispy_field }}
+                                  </div>
+                                  <div class="form-group col-md-1">
+                                      {{ filtro_exped_git.form.nro_inscripto | as_crispy_field }}
+                                  </div>
+                                  <div class="form-group col-md-1">
+                                      {{ filtro_exped_git.form.dominio | as_crispy_field }}
+                                  </div>
+                                  <div class="form-group col-md-1">
+                                      {{ filtro_exped_git.form.adjudicacion | as_crispy_field }}
+                                  </div>
+                                  <div class="form-group col-md-1">    
+                                      {{ filtro_exped_git.form.cod_imp | as_crispy_field }}
+                                  </div>
+                                  <div class="form-group col-md-1">
+                                      {{ filtro_exped_git.form.nro_exp | as_crispy_field }}
+                                  </div>
+                                  <div class="form-group col-md-1">    
+                                      {{ filtro_exped_git.form.año_exped | as_crispy_field }}
+                                  </div>                  
+                              </div>
+                              <input type = "submit" value="Buscar" class = "btn btn-secondary">
+                          </div>
+                    </div>
+                  </form>
+              </div>
+            
+          </div>
+        </div>
+        <nav class="navbar navbar-light" style="background-color: #ddd6d6">
+          <span class="text"><strong>Buscador.</strong></span>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </nav>
+      </div>    
+  </div>
+</div>
+<br>
+
+<div class="container-fluid">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr class= "table-active text-center">
+                <th scope = "col">CUIT</th>    
+                <th scope = "col">Fecha de Inicio</th> 
+                <th scope = "col">Adjudicacion</th>
+                <th scope = "col">Demandado</th>
+                <th scope = "col">Impuesto</th>
+                <th scope = "col">Inscripto</th>
+                <th scope = "col">Dominio</th>
+                <th scope = "col">Monto</th>
+                <th scope = "col">Embargo</th>
+                <th scope = "col">Plan de Facilidades</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mandatario in expedientes %}
+            <tr>
+                <td>{{mandatario.cuit}}</td>
+                <td>{{mandatario.f_inicio_juic|date:"SHORT_DATE_FORMAT"}}</td>
+                <td><a href="{% url 'git:expediente_git' mandatario.adjudicacion %}">{{mandatario.adjudicacion}}</a></td>
+                <td>{{mandatario.apellido_nombre}}</td>
+                <td>{{mandatario.cod_imp}}</td>
+                <td>{{mandatario.nro_inscripto}}</td>
+                <td>{{mandatario.dominio}}</td>
+                <td><label>$ {{mandatario.imp_nominal}}</label></td>
+                <td>{{mandatario.embargos.estado}}</td>
+                <td>{{mandatario.planes_de_pago.estado_del_plan}}</td>
+              {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+<br>
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+      {% if expedientes.has_previous %}
+      <li class="page-item"><a class="page-link" href= "?page=1">&laquo Primera</a></li>
+      <li class="page-item"><a class="page-link" href= "?page={{expedientes.previous_page_number}}">Previa</a></li>
+      {% endif %}
+      
+
+      <li class="page-item disabled"><a href="#" class= "page-link">Página {{ expedientes.number }} of 
+          {{ expedientes.paginator.num_pages }}</a></li>
+      
+      {% if expedientes.has_next %}
+      <li class="page-item"><a class="page-link" href= "?page= {{expedientes.next_page_number }}">Siguiente</a></li>
+      <li class="page-item"><a class="page-link"href= "?page={{ expedientes.paginator.num_pages }}"> Última &raquo </a></li>
+      {% endif %}
+  </ul> 
+</nav>
+
+
+             
+
+
+
+{% endblock %} 

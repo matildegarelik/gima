@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+<body>
+    <br>
+<div class= 'container'>
+  <div class="row">
+    <div class="col-3">
+    </div>
+    <div class="col-10">
+      <br>
+      <br>
+      <br>
+      <div class="card-header bg-secondary text-center text-white">
+        <h4>Subir Comprobantes de Pago</h4>
+      </div> 
+      <div class="card bg-light border border-dark">
+        <br>
+        <form action="subir_comprobantes/" method= "POST" class="dropzone" id="MyDrpzone">
+          {% csrf_token %}
+          <div class="fallback">
+            <input name="file" type="file" multiple />
+          </div>
+        </form>
+
+{%endblock%}

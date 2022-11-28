@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+{% load static%}
+{% load crispy_forms_tags%}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3>Eliminar Embargo</h3>
+        </div>
+<br>
+    <p>¿Estas seguro que deseas eliminar el embargo trabado en el expediente <strong>"{{embargos}}"</strong>?</p>
+
+    <div class="container-sm">
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-6">
+                <form action= "{% url 'git:eliminar_embargo' embargos.id %}" method="POST">
+                    {% csrf_token %}
+                    <a href="{% url 'git:embargos' %}">Cancelar</a>
+                    
+                    <input type="submit" name="Confirmar">
+                </form>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    </div>      
+
+
+
+{% endblock %} 

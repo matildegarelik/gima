@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+{% load static %}
+
+{%block css %}
+
+<link rel="stylesheet" href="{% static 'admin/css/vendor/select2/select2.css' %}">
+<link rel="stylesheet" href="{% static 'admin/css/autocomplete.css' %}" />
+
+{% endblock css %}
+
+
+{% block js %}
+
+
+<script src= "{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+<script src="{% static 'admin/js/vendor/select2/select2.full.js' %}"></script>
+<script src="{% static 'admin/js/jquery.init.js' %}"></script>
+<script src="{% static 'admin/js/autocomplete.js' %}"></script>
+
+{% endblock js %}
+
+    <h2>Eliminar Plan</h2>
+    <br/> <br/>
+    {% if submitted %}
+        El plan fue ELIMINADO.
+    
+    {% else %}
+
+           <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{form.as_p}}
+
+
+            <input type = "submit" value="Cargar" class = "btn btn-secondary">
+        
+            </form>
+        {% endif %}
+                   
+
+{% endblock %} 

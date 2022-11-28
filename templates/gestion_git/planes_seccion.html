@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %} Planes{% endblock %}
+{% block content %}
+{% load crispy_forms_tags %}
+<br>
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-12"><h3>Gestión de <b>Planes</b> <b>Mandatario: {{lista_datos.nombre}} {{lista_datos.apellido}}</b></h3></div>
+            </div>  
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm">
+                <div class="card text-center text-white bg-info" style="max-width: 18rem;">
+                    <div class="card-header"><h5>Total Planes</h5></div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{total_planes}}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="card text-center text-white bg-danger" style="max-width: 18rem;">
+                    <div class="card-header"><h5>Planes Pendientes</h5></div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{planes_pendientes}}</h5>
+                    </div>
+                </div>
+            </div>    
+            <div class="col-sm">
+                <div class="card text-center text-white bg-success mb-3" style="max-width: 18rem;">
+                    <div class="card-header"><h5>Planes Cancelados</h5></div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{planes_cancelados}}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container border border-dark bg-light p-3">
+    <form method="get" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class='col-md-12'>
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        {{filtro_planes.form.adjudicacion|as_crispy_field}}
+                    </div>
+                    <div class="form-group col-md-2">
+                        {{filtro_planes.form.estado_del_plan|as_crispy_field}}
+                    </div>
+                    <div class="form-group col-md-">
+                        {{filtro_planes.form.fecha_de_suscripcion_desde|as_crispy_field}}
+                    </div>
+                    <div class="form-group col-md-3">
+                        {{filtro_planes.form.fecha_de_suscripcion_hasta|as_crispy_field}}
+                    </div>
+                    <div class="form-group col-md-1">
+                        <div>
+                            <br>
+                        </div>
+                        <input type = "submit" value="Buscar" class = "btn btn-secondary">
+                    </div>
+                </div>
+                <a href="{% url 'git:exportar_planes' %}">Descargar Planes</a>
+            </div>
+        </div>
+    </form>
+</div>  
+<br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <table class="table-bordered table-hover align-middle text-center">
+                <thead>
+                    <tr class="table-active">
+                        <th scope = "col">Demandado</th>
+                        <th scope = "col">Adjudicación</th>
+                        <th scope = "col">Impuesto</th>
+                        <th scope = "col">Inscripto</th>
+                        <th scope = "col">Dominio</th>
+                        <th scope = "col">Importe Actual</th>
+                        <th scope = "col">Forma de pago</th>
+                        <th scope = "col">Estado del Plan</th>
+                        <th scope = "col">Fecha-firma</th>
+                        <th scope = "col">Archivo PF</th>
+                        <th scope = "col">Fecha-Pago</th>
+                        <th scope = "col">Cbante.PF</th>
+                        <th scope = "col">Comprobante</th>
+                        <th scope = "col">Estado-Embargo</th>
+                        <th colspan="2">Edición</th>
+                    </tr>
+                </thead>
+            <tbody>
+                
+                {% for plan in planes_seccion %}
+                <tr>
+                    <td class="align-middle text-left">{{plan.adjudicacion.apellido_nombre}}</td>
+                    <td class="align-middle text-center"><a href="{% url 'git:expediente_git' plan.adjudicacion %}">{{plan.adjudicacion.adjudicacion}}</a></td>
+                    <td class="align-middle text-center">{{plan.adjudicacion.cod_imp}}</td>
+                    <td class="align-middle text-center">{{plan.adjudicacion.nro_inscripto}}</td>
+                    <td class="align-middle text-center">{{plan.adjudicacion.dominio}}</td>
+                    <td class="align-middle text-center">$ {{plan.imp_actualizado}}</td>
+                    <td class="align-middle text-center">{{plan.modalidad_de_pago}}</td>
+                    <td class="align-middle text-center">{{plan.estado_del_plan}}</td>
+                    <td class="align-middle text-center">{{plan.fecha_de_suscripcion|date:"SHORT_DATE_FORMAT"}}</td>
+                    <td class="align-middle text-center"><a href="/media/{{plan.archivo_plan}}" target= "_blank" class= "btn btn-outline-info btn-sm"> Ver Plan</a></td>
+                    <td class="align-middle text-center">{{plan.fecha_de_cancelacion|date:"SHORT_DATE_FORMAT"}}</td>
+                    <td class="align-middle text-center">{{plan.acredito_comprobante}}</td>
+                    <td class="align-middle text-center"><a href="/media/{{plan.comprobantes}}" target= "_blank" class= "btn btn-outline-success btn-sm"> Ver Cbante</a></td>
+                    <td class="align-middle text-center">{{plan.adjudicacion.embargos.estado}}</td>
+                    <td class="align-middle text-center"><a class="btn btn-primary btn-sm" href="{% url 'git:actualizar_plan' plan.id%}">Actualizar</a></button></td>
+                    <td class="align-middle text-center"><a class="btn btn-danger btn-sm" href="{% url 'git:eliminar_plan' plan.id%}">Eliminar</a></button></td>
+                {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<br>
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if planes_seccion.has_previous %}
+        <li class="page-item"><a class="page-link" href= "?page=1">&laquo Primera</a></li>
+        <li class="page-item"><a class="page-link" href= "?page={{planes_seccion.previous_page_number}}">Previa</a></li>
+        {% endif %}
+        
+
+        <li class="page-item disabled"><a href="#" class= "page-link">Página {{ planes_seccion.number }} of 
+            {{ planes_seccion.paginator.num_pages }}</a></li>
+        
+        {% if planes_seccion.has_next %}
+        <li class="page-item"><a class="page-link" href= "?page= {{planes_seccion.next_page_number }}">Siguiente</a></li>
+        <li class="page-item"><a class="page-link"href= "?page={{ planes_seccion.paginator.num_pages }}"> Última &raquo </a></li>
+        {% endif %}
+    </ul> 
+</nav>
+
+<br>
+
+
+
+{% endblock %} 

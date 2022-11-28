@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+{% load static %}
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h2>Cargar Nuevo Expediente GIT para el Mandatario: {{seccion.nombre}} {{seccion.apellido}}</h2>
+        </div>
+    </div>
+</div>
+<br/>
+{% if submitted %}
+
+<div class="container-sm">
+    <div class="card">
+        <div class="card-header">
+            <h5>La operación se realizó con éxito!</h5>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="container-fluid">
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class='col-md-12'>
+                <div class="form-row">
+                    <div class="form-group col-md-1">
+                    </div>
+                    <div class="form-group col-md-1">
+                        {{ crear_expediente_form.seccion | as_crispy_field }}
+                        {{ crear_expediente_form.juzgado | as_crispy_field }}                    
+                        {{ crear_expediente_form.año_adm | as_crispy_field }}
+                        {{ crear_expediente_form.cod_post | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-1">
+                        {{ crear_expediente_form.adjudicacion | as_crispy_field }}
+                        {{ crear_expediente_form.secretaria | as_crispy_field }}
+                        {{ crear_expediente_form.tipo_adm | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-1">
+                        {{ crear_expediente_form.cuit | as_crispy_field }}
+                        {{ crear_expediente_form.nro_exp | as_crispy_field }}
+                        {{ crear_expediente_form.exp_adm | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-2">
+                        {{ crear_expediente_form.apellido_nombre | as_crispy_field }}     
+                        {{ crear_expediente_form.f_inicio_juic | as_crispy_field }}
+                        {{ crear_expediente_form.calle | as_crispy_field }}
+                        {{ crear_expediente_form.const_deuda | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-1">
+                        {{ crear_expediente_form.cod_imp | as_crispy_field }}
+                        {{ crear_expediente_form.oficio | as_crispy_field }}
+                        {{ crear_expediente_form.puerta | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-1">
+                        {{ crear_expediente_form.dominio | as_crispy_field }}
+                        {{ crear_expediente_form.solicitud | as_crispy_field }}
+                        {{ crear_expediente_form.piso | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-1">
+                        {{ crear_expediente_form.nro_inscripto | as_crispy_field }}
+                        {{ crear_expediente_form.fecha_adj | as_crispy_field }}
+                        {{ crear_expediente_form.dpto | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-1">
+                        {{ crear_expediente_form.imp_nominal | as_crispy_field }}
+                        {{ crear_expediente_form.estado_juicio | as_crispy_field }}
+                        {{ crear_expediente_form.oficina | as_crispy_field }}
+                    </div><div class="form-group col-md-1">
+                        {{ crear_expediente_form.desc_adj | as_crispy_field }}
+                        {{ crear_expediente_form.año_exped | as_crispy_field }}
+                        {{ crear_expediente_form.localidad | as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type = "submit" value= "Cargar" class = "btn btn-secondary">
+                    </div>
+                </div>
+            </div>        
+        </div>    
+    </form> 
+</div>
+{%endif%}
+
+{% endblock %} 

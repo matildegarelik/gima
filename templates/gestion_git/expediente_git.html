@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %} GIMA {% endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h4 class="card-title">{{expediente_git.apellido_nombre}}</h4> 
+    </div>
+  <div class="card-body">    
+  <div class="row">
+      <div class="col-sm">
+        <p class="text-md-left"><strong> Seccion:</strong> {{expediente_git.seccion}}</p>
+        <p class="text-md-left"><strong> CUIT: </strong><a href="https://www.cuitonline.com/search.php?q={{expediente_git.cuit}}" class="btn btn-outline-primary btn-sm" target="_bank"> {{expediente_git.cuit}}</a></p>
+      </div>
+      <div class="col-sm">
+        <p class="text-md-left"><strong> Impuesto:</strong> {{expediente_git.cod_imp}}</p>
+        <p class="text-md-left"><strong> Adjudicación:</strong> <a href="https://eje.juscaba.gob.ar/iol-ui/p/expedientes?identificador=&fuero=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&tribunal=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&materia=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&objetoJuicio=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&estadoAdministrativo=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&fechaDesde=&fechaHasta=&caratula=&open=false&otraJurisdiccion=&expUACF=&cuij=&anio=&numero=&codigoDGR=&numeroAdjudicacion={{expediente_git.adjudicacion}}&montoDesde=&montoHasta=&cuijDen=&numeroDen=&sentencia=0&favoritos=0&causas=0&tituloBusqueda=Causas&tipoBusqueda=CAU" class="btn btn-outline-info btn-sm" target="_bank"> {{expediente_git.adjudicacion}}</a></p>
+      </div>
+      <div class="col-sm">
+        <p class="text-md-left"><strong> Fecha de Inicio:</strong> {{expediente_git.f_inicio_juic}}</p>
+        <p class="text-md-left"><strong> Inscripto:</strong> {{expediente_git.nro_inscripto}}</p>
+      </div>
+  </div>    
+      <div class="row">
+        <div class="col-sm">
+          <p class="text-md-left"><strong> Nro. Expediente:</strong><a href="https://eje.juscaba.gob.ar/iol-ui/p/expedientes?identificador={{expediente_git.nro_exp}}&fuero=%7B%22codigo%22:%22CAYT%22,%22descripcion%22:%22CONTENCIOSO%20ADMINISTRATIVO%20Y%20TRIBUTARIO%22%7D&tribunal=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&materia=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&objetoJuicio=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&estadoAdministrativo=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&fechaDesde=&fechaHasta=&caratula=&open=false&otraJurisdiccion=&expUACF=&cuij=&anio={{expediente_git.año_exped}}&numero=&codigoDGR=&numeroAdjudicacion=&montoDesde=&montoHasta=&cuijDen=&numeroDen=&sentencia=0&favoritos=0&causas=0&tituloBusqueda=Causas&tipoBusqueda=CAU" class="btn btn-outline-primary btn-sm" target="_bank"> {{expediente_git.nro_exp}}</a></p>  
+          <p class="text-md-left"><strong> Dominio:</strong> <a href="https://eje.juscaba.gob.ar/iol-ui/p/expedientes?identificador=&fuero=%7B%22codigo%22:%22CAYT%22,%22descripcion%22:%22CONTENCIOSO%20ADMINISTRATIVO%20Y%20TRIBUTARIO%22%7D&tribunal=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&materia=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&objetoJuicio=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&estadoAdministrativo=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&fechaDesde=&fechaHasta=&caratula=&open=false&otraJurisdiccion=&expUACF=&cuij=&anio=&numero=&codigoDGR={{expediente_git.dominio}}&numeroAdjudicacion=&montoDesde=&montoHasta=&cuijDen=&numeroDen=&sentencia=0&favoritos=0&causas=0&tituloBusqueda=Causas&tipoBusqueda=CAU"class="btn btn-outline-primary btn-sm" target="_bank">{{expediente_git.dominio}}</a></p>
+        </div>
+        <div class="col-sm">
+          <p class="text-md-left"><strong> Importe nominal:</strong> $ {{expediente_git.imp_nominal}}</p>
+          <p class="text-md-left"><strong> Constancia de deuda:</strong> <a href= "/media/{{expediente_git.const_deuda}}" target= "_blank" class= "btn btn-outline-info btn-sm"> Ver constancia</a>
+        </div>
+        <div class="col-sm">
+          <p class="text-md-left"><strong> Año:</strong> {{expediente_git.año_adm}}</p>
+          <p class="text-md-left"><strong> CBU:</strong> {{expediente_git.cbu.cbu}}</p> 
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm">
+          <p class="text-md-left"><a class="btn btn-outline-success" href="{% url 'git:nuevo_plan_adj' expediente_git.adjudicacion %}">Agregar nuevo Plan</a></button></p>
+          <p class="text-md-left"><a class="btn btn-outline-danger" href="{% url 'git:nuevo_embargo_adj' expediente_git.adjudicacion %}">Embargar</a></button></p>
+        </div>
+      </div>
+  </div>
+  </div>
+  <br>
+
+
+</div>
+
+
+{% endblock %} 

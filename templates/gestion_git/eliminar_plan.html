@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+{% load static%}
+{% load crispy_forms_tags%}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3>Eliminar Plan</h3>
+        </div>
+<br>
+    <p>¿Estas seguro que deseas eliminar el plan suscripto"{{planes}}"?</p>
+
+    <div class="container-sm">
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-6">
+                <form action= "{% url 'git:eliminar_plan' planes.id %}" method="POST">
+                    {% csrf_token %}
+                    <a href="{%  url 'git:planes' %}">Cancelar</a>
+                        <input type="submit" name="Confirmar">
+                </form>
+            </div>
+            <div class = "col">
+            </div>
+        </div>
+    </div>
+
+{% endblock %} 

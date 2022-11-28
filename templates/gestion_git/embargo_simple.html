@@ -1,0 +1,25 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3>Cargar Nuevo Embargo</h3>
+        </div>
+    </div>
+</div>    
+    <br/>    
+
+{% if submitted %}
+<div class="container-sm">
+    <div class="card">
+        <div class="card-header">
+            <h5>El embargo fue cargado en forma Exitosa!</h5>
+        </div>
+    </div>
+</div>    
+        {% else %}
+        <div class="container-fluid">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {{form_embargo.as_p}}
+                {% csrf_token %}
+            </form>
+        </div>
+{%endif%}

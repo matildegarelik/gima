@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block content %}
+<br>
+<div class=" container-sm container-fluid">
+    <h3>Gestión Mandatarios</h3>
+</div>
+<br>
+<div class=" container-sm container-fluid">
+    <table class="table table table-hover">
+        <thead>
+            <tr>
+                <th scope = "col">Sección</th>
+                <th scope = "col">Nombre</th>
+                <th scope = "col">Apellido</th>
+                <th scope = "col">CUIT</th>
+                <th scope = "col">E_mail</th>
+                <th scope = "col">E_mail_AGIP</th>
+                <th scope = "col">Direción</th>
+                <th scope = "col">Teléfono</th>
+            </tr>
+        </thead>
+    <tbody>
+        {% for mandatario in secciones %}
+        <tr>
+            <td><a href="{% url 'git:seccion' mandatario.seccion %}">{{mandatario.seccion}}</a></td>
+            <td>{{mandatario.nombre}}</td>
+            <td>{{mandatario.apellido}}</td>
+            <td>{{mandatario.cuit}}</td>
+            <td>{{mandatario.e_mail}}</td>
+            <td>{{mandatario.e_mail_agip}}</td>
+            <td>{{mandatario.direccion}}</td>
+            <td>{{mandatario.telefono}}</td>
+                            
+        {%endfor%}
+        </tr>          
+    </tbody>
+    </table>
+    <br/><br/>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if adjudicacion.has_previous %}
+            <li class="page-item"><a class="page-link" href= "?page=1">&laquo Primera</a></li>
+            <li class="page-item"><a class="page-link" href= "?page={{ adjudicacion.previous_page_number}}">Previa</a></li>
+    
+            {% endif %}
+            <li class="page-item disabled"><a href="#" class= "page-link">Página {{ adjudicacion.number }} of
+                {{ adjudicacion.paginator.num_pages }}</a></li>
+            {% if adjudicacion.has_next %}
+            <li class="page-item"><a class="page-link" href= "?page= {{ adjudicacion.next_page_number }}">Siguiente</a></li>
+            <li class="page-item"><a class="page-link"href= "?page={{ adjudicacion.paginator.num_pages }}"> Última &raquo </a></li>
+            {% endif %}
+        </ul> 
+    </nav>
+    <br/><br/>
+    <br/><br/>
+    
+
+{% endblock %} 
