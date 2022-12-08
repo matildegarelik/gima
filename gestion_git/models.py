@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Seccion(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    #user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=200)
     apellido = models.CharField(max_length=200)
     cuit = models.CharField(max_length= 12,null= True, blank=True)
@@ -25,6 +25,10 @@ class Seccion(models.Model):
         return str(self.seccion)
     class Meta:
         ordering= ('seccion',)
+
+class UserSeccion(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    seccion = models.ForeignKey(Seccion, null=True, on_delete=models.SET_NULL)
 
 class Adjudicacion(models.Model):
     cuit = models.CharField(max_length=13, null= False, blank=False)
@@ -67,8 +71,8 @@ class Adjudicacion(models.Model):
         ordering= ['-f_inicio_juic','adjudicacion','-imp_nominal']
 
 class Embargos(models.Model):
-    seccion = models.ForeignKey(Seccion, on_delete=PROTECT)
-    adjudicacion = models.OneToOneField(Adjudicacion, max_length=45,on_delete=PROTECT, blank=False, null=False)
+    #seccion = models.CharField(Seccion, on_delete=PROTECT)
+    adjudicacion = models.ForeignKey(Adjudicacion, max_length=45,on_delete=PROTECT, blank=False, null=False)
     tipo_de_embargo = models.CharField (choices = tipo_de_embargo,default='preventivo', max_length=45, blank=False, null=False)
     clase_embargo = models.CharField (choices= clase_embargo, default="SOJ",max_length=45, null= True, blank=True)
     monto_embargado = models.DecimalField(max_digits=12, decimal_places=2,null= False, blank=False)
@@ -89,8 +93,8 @@ class Embargos(models.Model):
         ordering = ('-fecha_pedido_git',) 
 
 class Planes_de_pago(models.Model):
-    seccion = models.ForeignKey(Seccion, null=True, on_delete=models.SET_NULL)
-    adjudicacion = models.OneToOneField(Adjudicacion, max_length=45,on_delete=PROTECT, blank=False, null=False)
+    #seccion = models.ForeignKey(Seccion, null=True, on_delete=models.SET_NULL)
+    adjudicacion = models.ForeignKey(Adjudicacion, max_length=45,on_delete=PROTECT, blank=False, null=False)
     imp_actualizado = models.DecimalField (max_digits=12,decimal_places=2, null= False, blank=False)
     fecha_de_suscripcion = models.DateField(blank=False, null=False)
     modalidad_de_pago = models.CharField (max_length=45, choices = mod_pago,default='Contado', null=True, blank=True) 
@@ -108,6 +112,7 @@ class Planes_de_pago(models.Model):
     archivo_plan= models.FileField(upload_to='planes/planes_de_pago/', blank=True, null=True)
     comprobantes = models.FileField(upload_to='planes/comprobantes/', blank=True, null=True)
     dia_ingreso_plan= models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    facturado = models.BooleanField(blank=False, default=False)
 
     def __str__(self):
         return str(self.adjudicacion)
@@ -124,9 +129,12 @@ class Comprobantes_de_Pago(models.Model):
 
 class Cbu_Contribuyente(models.Model):
     seccion = models.CharField(max_length= 3, null= True, blank=True)
+    #seccion = models.ForeignKey(Seccion, null=True, on_delete=models.SET_NULL)
     cuit= models.CharField(null= False, blank= False,max_length=15)
+    demandado = models.CharField(max_length= 200, null= True, blank=True)
     impuesto = models.CharField(max_length=3, blank= True, null= True)
     adjudicacion= models.ForeignKey(Adjudicacion,on_delete=models.PROTECT, blank=True, null=True)
+    #adjudicacion=models.CharField(max_length=20, null=True, blank=True)
     cbu = models.CharField(max_length=30,blank=False, null=False)
     banco = models.CharField(max_length=200, blank=False, null=False)
 

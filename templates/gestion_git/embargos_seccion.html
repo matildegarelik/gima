@@ -40,9 +40,10 @@
     </div>
 </div>      
 <br>
+
+<form method="get" enctype="multipart/form-data" id="filter-form">
+    {% csrf_token %}
 <div class="container border border-dark bg-light p-3">
-    <form method="get" enctype="multipart/form-data">
-        {% csrf_token %}
         <div class="row">
             <div class='col-md-12'>
                 <div class="form-row">
@@ -52,29 +53,41 @@
                     <div class="form-group col-md-2">
                         {{filtro_exped_embargo.form.clase_embargo|as_crispy_field}}
                     </div>
-                    <div class="form-group col-md-">
+                    <div class="form-group col-md-3">
                         {{filtro_exped_embargo.form.dia_ingreso_embargo_desde|as_crispy_field}}
                     </div>
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-3">
                         {{filtro_exped_embargo.form.dia_ingreso_embargo_hasta|as_crispy_field}}
                     </div>
-                    <div class="form-group col-md-1">
-                        <div>
-                            <br>
-                        </div>
-                        <input type = "submit" value="Buscar" class = "btn btn-secondary">
+                    <div class="form-group col-md-2">
+                        <input type = "submit" value="Buscar" class = "btn btn-secondary" style="margin-top:1.9rem;">
                     </div>
                 </div>
-                <a href="{% url 'git:exportar_embargos' %}">Descargar Embargos</a>
+                <div class="form-row">
+                    <div class="col-md-10 row">
+                        <label class="col-md-2 mt-2">Ordenar por</label>
+                        <select id="ordenar" name="ordenar" class="select form-control col-md-3" style="margin-left:-2.5rem;">
+                            <option value="">...</option>
+                            <option value="-fecha_pedido_git">Fecha ingreso ASC</option>
+                            <option value="fecha_pedido_git">Fecha ingreso DESC</option>
+                            <option value="monto_embargado">Monto embargado ASC</option>
+                            <option value="-monto_embargado">Monto embargado DESC</option>
+                
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button id="download-btn" class="col-md-12 btn btn-secondary">Descargar Planes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </form>
 </div>
 <br>
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <table class="table table-bordered table-hover">
+            <div id="alert-container"></div>
+            <table class="table table-bordered table-hover" style="width:100%">
                 <thead>
                     <tr class= "table-active text-center">
                         <th scope = "col">Demandado</th>
@@ -99,7 +112,15 @@
                     <td class="align-middle text-center">{{embargo.adjudicacion.nro_inscripto}}</td>
                     <td class="align-middle text-center"> $ {{embargo.monto_embargado}}</td>
                     <td class="align-middle text-center">{{embargo.tipo_de_embargo}}</td>
-                    <td class="align-middle text-center">{{embargo.estado}}</td>
+                    <td class="align-middle text-center">
+                        <select class="select-estado select form-control"  id="estado-{{embargo.id}}" data-id="{{embargo.id}}">
+                            <option {% if embargo.estado == 'Trabado' %} selected {% endif %}>Trabado</option>
+                            <option {% if embargo.estado == 'Lev.solicitado' %} selected {% endif %}>Lev.solicitado</option>
+                            <option {% if embargo.estado == 'Levantado' %} selected {% endif %}>Levantado</option>
+                            <option {% if embargo.estado == 'Embargo' %} selected {% endif %}>Embargo</option>
+                            <option {% if embargo.estado == 'S/Oficio' %} selected {% endif %}>S/Oficio</option>
+                        </select>
+                    </td>
                     <td class="align-middle text-center">{{embargo.fecha_pedido_git|date:"SHORT_DATE_FORMAT"}}</td>
                     <td class="align-middle text-center">{{embargo.orden_levantamiento}}</td>
                     <td class="align-middle text-center">{{embargo.fecha_levantamiento_git|date:"SHORT_DATE_FORMAT"}}</td>
@@ -117,8 +138,8 @@
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
         {% if embargos_seccion.has_previous %}
-        <li class="page-item"><a class="page-link" href= "?page=1">&laquo Primera</a></li>
-        <li class="page-item"><a class="page-link" href= "?page={{embargos_seccion.previous_page_number}}">Previa</a></li>
+        <li class="page-item"><button type="submit" name="page" class="page-link" value="1">&laquo Primera</button></li>
+        <li class="page-item"><button type="submit" name="page" class="page-link" value="{{embargos_seccion.previous_page_number}}">Previa</button></li>
         {% endif %}
         
 
@@ -126,12 +147,54 @@
             {{ embargos_seccion.paginator.num_pages }}</a></li>
         
         {% if embargos_seccion.has_next %}
-        <li class="page-item"><a class="page-link" href= "?page= {{embargos_seccion.next_page_number }}">Siguiente</a></li>
-        <li class="page-item"><a class="page-link"href= "?page={{ embargos_seccion.paginator.num_pages }}"> Última &raquo </a></li>
+        <li class="page-item"><button type="submit" name="page" class="page-link" value="{{embargos_seccion.next_page_number }}">Siguiente</button></li>
+        <li class="page-item"><button type="submit" name="page" class="page-link" value="{{ embargos_seccion.paginator.num_pages }}"> Última &raquo </button></li>
         {% endif %}
     </ul> 
 </nav>   
-
+</form>
 <br>
+
+<script type="text/javascript">
+    document.getElementById('download-btn').addEventListener('click', function(e){te
+        e.preventDefault()
+
+        let url = '{% url 'git:exportar_embargos' %}?'
+        url+='seccion='
+        url+='&estado='+ document.getElementById('id_estado').value
+        url+='&clase='+ document.getElementById('id_clase_embargo').value
+        url+='&desde='+ document.getElementById('id_dia_ingreso_embargo_desde').value
+        url+='&hasta='+ document.getElementById('id_dia_ingreso_embargo_hasta').value
+        
+        window.open(url,'_blank')
+    })
+    $('#ordenar').on('change',()=>{
+        $('#filter-form').submit()
+      })
+    $(document).ready(()=>{
+        $('#ordenar').val('{{ordenar}}')
+      })
+    $('.select-estado').on('change',(e)=>{
+        let embargo_id= e.target.dataset.id
+        let estado = e.target.value
+        $.ajax({
+            url:"{% url 'git:cambiar_estado_embargo' %}",
+            data:{
+                pk:embargo_id,
+                estado:estado
+            }
+        }).done((response)=>{
+            console.log(response)
+            $('#alert-container').append(`
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Estado de embargo actualizado.</strong> Los cambios impactaron en la base de datos.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            `)
+        })
+    })
+</script>
 
 {% endblock %} 

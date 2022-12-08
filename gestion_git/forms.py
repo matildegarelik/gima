@@ -85,7 +85,7 @@ class Formulario_planes(ModelForm):
    
     class Meta:
         model = Planes_de_pago
-        fields = ('seccion','adjudicacion','imp_actualizado','fecha_de_suscripcion', 'archivo_plan',
+        fields = ('adjudicacion','imp_actualizado','fecha_de_suscripcion', 'archivo_plan',
         'modalidad_de_pago','cantidad_de_cuotas_plan','honorarios_mandatario','honorarios_procuracion',
         'fecha_de_pago_honorarios','cuotas_de_honorarios','estado_del_plan','comprobantes','email','celular'
         )
@@ -125,10 +125,11 @@ class Formulario_embargo(ModelForm):
     fecha_acreditacion = forms.DateField(label='Fecha de acreditación en juicio',required=False,widget=forms.DateInput(attrs={'type':'date'}))
     fecha_pedido_levantamiento = forms.DateField(label='Fecha pedido lev. en juicio',required=False, widget=forms.DateInput(attrs={'type':'date'}))
     fecha_levantamiento_git = forms.DateField(label='Fecha de lev. en GIT',required=False,widget=forms.DateInput(attrs={'type':'date'}))
+    adjudicacion = forms.ModelChoiceField(queryset=Adjudicacion.objects.filter(seccion_id=147))
 
     class Meta:
         model = Embargos
-        fields = ('id','seccion','adjudicacion','tipo_de_embargo','clase_embargo','monto_embargado',
+        fields = ('id','adjudicacion','tipo_de_embargo','clase_embargo','monto_embargado',
         'estado','fecha_pedido_git','fecha_acreditacion','fecha_pedido_levantamiento',
         'orden_levantamiento','fecha_levantamiento_git','oficio_embargo', 'oficio_lev_embargo'
         )
@@ -141,7 +142,7 @@ class Formulario_embargo(ModelForm):
         #}
 
 Formulario_Embargo_Git_Set = inlineformset_factory(
-    Seccion,
+    Adjudicacion,
     Embargos,
     Formulario_embargo,
     can_delete=False,

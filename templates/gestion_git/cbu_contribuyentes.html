@@ -14,7 +14,10 @@
 </div>
 <br>
 <form class="d-flex" method="get" enctype="multipart/form-data">
-  {% csrf_token %}
+  
+  <div class="container-sm col-2 text-center">
+    {{filtro_cbu.form.demandado|as_crispy_field}}
+  </div>
     <div class="container-sm col-2 text-center">
       {{filtro_cbu.form.cuit|as_crispy_field}}
     </div>

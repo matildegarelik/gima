@@ -30,16 +30,32 @@
                     <div class='col-md-12'>
                         <div class="form-row">
                             <div class="form-group col-md-2">
+                               
                             </div>
                             <div class="form-group col-md-2">
-                                {{ form_embargo.seccion | as_crispy_field }}
+                                <div id="div_id_seccion" class="form-group">
+                                    <label for="id_seccion" class=" requiredField">
+                                        Seccion<span class="asteriskField">*</span>
+                                    </label>
+                                    <input name="seccion" class="form-control" id="id_seccion" required 
+                                        readonly value="{{seccion}}"
+                                    />
+                                </div>
                                 {{ form_embargo.tipo_de_embargo | as_crispy_field }}
                                 <br>
                                 {{ form_embargo.fecha_acreditacion | as_crispy_field }}
                                 {{ form_embargo.oficio_embargo | as_crispy_field }}
                             </div>
                             <div class="form-group col-md-2">
-                                {{ form_embargo.adjudicacion | as_crispy_field }}
+                                <div id="div_id_adjudicacion" class="form-group">
+                                    <label for="id_adjudicacion" class=" requiredField">
+                                        Adjudicación<span class="asteriskField">*</span>
+                                    </label>
+                                    <input name="adjudicacion" class="form-control" id="id_adjudicacion" required 
+                                        readonly value="{{adjudicacion}}"
+                                    />
+                                </div>
+                                
                                 {{ form_embargo.clase_embargo | as_crispy_field }}
                                 <br>
                                 {{ form_embargo.fecha_pedido_levantamiento | as_crispy_field }}                                 
@@ -68,6 +84,10 @@
             </form>
         </div>
     </div>
+    <script type="text/javascript">
+        let adj = '{{adjudicacion}}'
+        document.getElementById('id_adjudicacion').value=adj;
+    </script>
        
         
 {% endif %}

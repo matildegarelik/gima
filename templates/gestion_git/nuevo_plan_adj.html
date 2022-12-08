@@ -32,12 +32,26 @@
                             <div class="form-group col-md-1">
                             </div>
                             <div class="form-group col-md-2">
-                                {{ form_plan.seccion | as_crispy_field }}
+                                <div id="div_id_seccion" class="form-group">
+                                    <label for="id_seccion" class=" requiredField">
+                                        Seccion<span class="asteriskField">*</span>
+                                    </label>
+                                    <input name="seccion" class="form-control" id="id_seccion" required 
+                                        readonly value="{{adjudicacion.seccion_id}}"
+                                    />
+                                </div>
                                 {{ form_plan.modalidad_de_pago | as_crispy_field }}
                                 {{ form_plan.cuotas_de_honorarios | as_crispy_field }}
                             </div>
                             <div class="form-group col-md-2">
-                                {{ form_plan.adjudicacion | as_crispy_field }}
+                                <div id="div_id_adjudicacion" class="form-group">
+                                    <label for="id_adjudicacion" class=" requiredField">
+                                        Adjudicación<span class="asteriskField">*</span>
+                                    </label>
+                                    <input name="adjudicacion" class="form-control" id="id_adjudicacion" required 
+                                        readonly value="{{adjudicacion}}"
+                                    />
+                                </div>
                                 {{ form_plan.cantidad_de_cuotas_plan | as_crispy_field }}
                                 {{ form_plan.honorarios_mandatario | as_crispy_field }}
                             </div>

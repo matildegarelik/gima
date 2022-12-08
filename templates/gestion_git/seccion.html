@@ -42,13 +42,14 @@
   </div>
 </div>
 <br>
+<form method="get" enctype="multipart/form-data" id="filter-form">
+  {% csrf_token %}
 <div class="container-fluid">
   <div class="pos-f-t">
-      <div class="collapse" id="navbarToggleExternalContent">
+        <div class="collapse" id="navbarToggleExternalContent">
           <div class="bg-light p-4">
               <div class="container-fluid">
-                <form method="get" enctype="multipart/form-data">
-                    {% csrf_token %}
+                
                     <div class="row">
                         <div class='col-md-12'>
                             <div class="form-row">
@@ -82,16 +83,27 @@
                               <input type = "submit" value="Buscar" class = "btn btn-secondary">
                           </div>
                     </div>
-                  </form>
+                  
               </div>
             
           </div>
         </div>
-        <nav class="navbar navbar-light" style="background-color: #ddd6d6">
+        <nav class="navbar navbar-light mb-3" style="background-color: #ddd6d6">
           <span class="text"><strong>Buscador.</strong></span>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
+        </nav>
+        <nav class="navbar navbar-light pt-2" style="background-color: #ddd6d6">
+          <span class="text"><strong>Ordenar por</strong></span>
+          <select id="ordenar" name="ordenar" class="select form-control col-md-2">
+            <option value="">...</option>
+            <option value="-f_inicio_juic">Fecha de inicio ASC</option>
+            <option value="f_inicio_juic">Fecha de inicio DESC</option>
+            <option value="imp_nominal">Monto ASC</option>
+            <option value="-imp_nominal">Monto DESC</option>
+
+          </select>
         </nav>
       </div>    
   </div>
@@ -125,10 +137,10 @@
                 <td>{{mandatario.nro_inscripto}}</td>
                 <td>{{mandatario.dominio}}</td>
                 <td><label>$ {{mandatario.imp_nominal}}</label></td>
-                <td>{{mandatario.embargos.estado}}</td>
+                <td>{{mandatario.embargos_set.first.estado}}</td>
                 <td>{{mandatario.planes_de_pago.estado_del_plan}}</td>
-              {% endfor %}
             </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
@@ -136,8 +148,8 @@
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-center">
       {% if expedientes.has_previous %}
-      <li class="page-item"><a class="page-link" href= "?page=1">&laquo Primera</a></li>
-      <li class="page-item"><a class="page-link" href= "?page={{expedientes.previous_page_number}}">Previa</a></li>
+      <li class="page-item"><button type="submit" name="page" class="page-link" value="1">&laquo Primera</button></li>
+      <li class="page-item"><button type="submit" name="page" class="page-link" value="{{expedientes.previous_page_number}}">Previa</button></li>
       {% endif %}
       
 
@@ -145,13 +157,20 @@
           {{ expedientes.paginator.num_pages }}</a></li>
       
       {% if expedientes.has_next %}
-      <li class="page-item"><a class="page-link" href= "?page= {{expedientes.next_page_number }}">Siguiente</a></li>
-      <li class="page-item"><a class="page-link"href= "?page={{ expedientes.paginator.num_pages }}"> Última &raquo </a></li>
+      <li class="page-item"><button type="submit" name="page" class="page-link" value="{{expedientes.next_page_number }}">Siguiente</button></li>
+      <li class="page-item"><button type="submit" name="page" class="page-link" value="{{ expedientes.paginator.num_pages }}"> Última &raquo </button></li>
       {% endif %}
   </ul> 
 </nav>
-
+</form>
 
             
-
+<script type="text/javascript">
+  $('#ordenar').on('change',()=>{
+    $('#filter-form').submit()
+  })
+  $(document).ready(()=>{
+    $('#ordenar').val('{{ordenar}}')
+  })
+</script>
 {% endblock %} 

@@ -14,6 +14,7 @@ urlpatterns = [
     path('gestion_git/', include(('gestion_git.urls','git'))),
     path('', pagina_de_login, name='login'),
     path('gestion_git/accounts', include('django.contrib.auth.urls')),    
+    path('__debug__/', include('debug_toolbar.urls'))
 ]
 
 if settings.DEBUG:

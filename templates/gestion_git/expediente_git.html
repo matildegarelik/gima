@@ -33,7 +33,13 @@
         </div>
         <div class="col-sm">
           <p class="text-md-left"><strong> Año:</strong> {{expediente_git.año_adm}}</p>
-          <p class="text-md-left"><strong> CBU:</strong> {{expediente_git.cbu.cbu}}</p> 
+          <p class="text-md-left"><strong> CBU:</strong> 
+            {% if cbu == '-' %}
+              {{cbu}}
+            {% else %}
+            <a href="{% url 'git:cbu_contribuyentes' %}?cuit={{expediente_git.cuit}}" target="_blank">{{cbu.cbu}}</a>
+            {% endif %}
+          </p> 
         </div>
       </div>
       <br>

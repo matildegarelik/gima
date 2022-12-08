@@ -39,41 +39,53 @@
         </div>
     </div>
 </div>
+<form method="get" enctype="multipart/form-data" id="filter-form">
+{% csrf_token %}
 <div class="container border border-dark bg-light p-3">
-    <form method="get" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="row">
-            <div class='col-md-12'>
-                <div class="form-row">
-                    <div class="form-group col-md-2">
-                        {{filtro_planes.form.adjudicacion|as_crispy_field}}
-                    </div>
-                    <div class="form-group col-md-2">
-                        {{filtro_planes.form.estado_del_plan|as_crispy_field}}
-                    </div>
-                    <div class="form-group col-md-">
-                        {{filtro_planes.form.fecha_de_suscripcion_desde|as_crispy_field}}
-                    </div>
-                    <div class="form-group col-md-3">
-                        {{filtro_planes.form.fecha_de_suscripcion_hasta|as_crispy_field}}
-                    </div>
-                    <div class="form-group col-md-1">
-                        <div>
-                            <br>
-                        </div>
-                        <input type = "submit" value="Buscar" class = "btn btn-secondary">
-                    </div>
+    
+    <div class="row">
+        <div class='col-md-12'>
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    {{filtro_planes.form.adjudicacion|as_crispy_field}}
                 </div>
-                <a href="{% url 'git:exportar_planes' %}">Descargar Planes</a>
+                <div class="form-group col-md-2">
+                    {{filtro_planes.form.estado_del_plan|as_crispy_field}}
+                </div>
+                <div class="form-group col-md-3">
+                    {{filtro_planes.form.fecha_de_suscripcion_desde|as_crispy_field}}
+                </div>
+                <div class="form-group col-md-3">
+                    {{filtro_planes.form.fecha_de_suscripcion_hasta|as_crispy_field}}
+                </div>
+                <div class="form-group col-md-1">
+                    <input type = "submit" value="Buscar" class = "btn btn-secondary" style="margin-top:1.9rem;">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-10 row">
+                    <label class="col-md-2 mt-2">Ordenar por</label>
+                    <select id="ordenar" name="ordenar" class="select form-control col-md-3" style="margin-left:-2.5rem;">
+                        <option value="">...</option>
+                        <option value="-fecha_de_suscripcion">Fecha firma ASC</option>
+                        <option value="fecha_de_suscripcion">Fecha de firma DESC</option>
+                        <option value="imp_actualizado">Importe actual ASC</option>
+                        <option value="-imp_actualizado">Importe actual DESC</option>
+            
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button id="download-btn" class="col-md-12 btn btn-secondary">Descargar Planes</button>
+                </div>
             </div>
         </div>
-    </form>
+    </div>
 </div>  
 <br>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12">
-            <table class="table-bordered table-hover align-middle text-center">
+        <div class="col-12"><div id="alert-container"></div>
+            <table class="table-bordered table-hover align-middle text-center" style="width:100%">
                 <thead>
                     <tr class="table-active">
                         <th scope = "col">Demandado</th>
@@ -89,6 +101,7 @@
                         <th scope = "col">Fecha-Pago</th>
                         <th scope = "col">Cbante.PF</th>
                         <th scope = "col">Comprobante</th>
+                        <th scope = "col">Estado-Facturacion</th>
                         <th scope = "col">Estado-Embargo</th>
                         <th colspan="2">Edición</th>
                     </tr>
@@ -104,12 +117,33 @@
                     <td class="align-middle text-center">{{plan.adjudicacion.dominio}}</td>
                     <td class="align-middle text-center">$ {{plan.imp_actualizado}}</td>
                     <td class="align-middle text-center">{{plan.modalidad_de_pago}}</td>
-                    <td class="align-middle text-center">{{plan.estado_del_plan}}</td>
+                    <td class="align-middle text-center">
+                        <select class="select-estado select form-control"  id="estado-{{plan.id}}" data-id="{{plan.id}}" {% if user.groups.all.0.name == "contador" %} disabled {% endif %}>
+                            <option {% if plan.estado_del_plan == 'Pendiente' %} selected {% endif %}>Pendiente</option>
+                            <option {% if plan.estado_del_plan == 'Nulo' %} selected {% endif %}>Nulo</option>
+                            <option {% if plan.estado_del_plan == 'Cancelado' %} selected {% endif %}>Cancelado</option>
+                            <option {% if plan.estado_del_plan == 'Vigente' %} selected {% endif %}>Vigente</option>
+                        </select>
+                    </td>
                     <td class="align-middle text-center">{{plan.fecha_de_suscripcion|date:"SHORT_DATE_FORMAT"}}</td>
-                    <td class="align-middle text-center"><a href="/media/{{plan.archivo_plan}}" target= "_blank" class= "btn btn-outline-info btn-sm"> Ver Plan</a></td>
+                    <td class="align-middle text-center">
+                        {% if plan.archivo_plan %}
+                        <a href="{{plan.archivo_plan.url}}" target= "_blank" class= "btn btn-outline-info btn-sm"> Ver Plan</a>
+                        {% endif %}
+                    </td>
                     <td class="align-middle text-center">{{plan.fecha_de_cancelacion|date:"SHORT_DATE_FORMAT"}}</td>
                     <td class="align-middle text-center">{{plan.acredito_comprobante}}</td>
-                    <td class="align-middle text-center"><a href="/media/{{plan.comprobantes}}" target= "_blank" class= "btn btn-outline-success btn-sm"> Ver Cbante</a></td>
+                    <td class="align-middle text-center">
+                        {% if plan.comprobantes %}
+                        <button onclick="comprobModal('{% url 'git:get_comprobantes' pk=plan.adjudicacion %}')" type="button" class= "btn btn-outline-success btn-sm"> Ver Cbante</button>
+                        {% endif %}
+                    </td>
+                    <td class="align-middle text-center">
+                        <select class="select-fact select form-control"  id="estado-fact-{{plan.id}}" data-id="{{plan.id}}" {% if user.groups.all.0.name == "contador" and plan.comprobantes  %} {% else %}disabled{% endif %}>
+                            <option {% if plan.facturado  %} selected {% endif %} value="1">Facturado</option>
+                            <option {% if plan.facturado  %} {% else %}selected {% endif %} value="0">No Facturado</option>
+                        </select>
+                    </td>
                     <td class="align-middle text-center">{{plan.adjudicacion.embargos.estado}}</td>
                     <td class="align-middle text-center"><a class="btn btn-primary btn-sm" href="{% url 'git:actualizar_plan' plan.id%}">Actualizar</a></button></td>
                     <td class="align-middle text-center"><a class="btn btn-danger btn-sm" href="{% url 'git:eliminar_plan' plan.id%}">Eliminar</a></button></td>
@@ -123,8 +157,8 @@
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
         {% if planes_seccion.has_previous %}
-        <li class="page-item"><a class="page-link" href= "?page=1">&laquo Primera</a></li>
-        <li class="page-item"><a class="page-link" href= "?page={{planes_seccion.previous_page_number}}">Previa</a></li>
+        <li class="page-item"><button type="submit" name="page" class="page-link" value="1">&laquo Primera</button></li>
+        <li class="page-item"><button type="submit" name="page" class="page-link" value="{{planes_seccion.previous_page_number}}">Previa</button></li>
         {% endif %}
         
 
@@ -132,14 +166,110 @@
             {{ planes_seccion.paginator.num_pages }}</a></li>
         
         {% if planes_seccion.has_next %}
-        <li class="page-item"><a class="page-link" href= "?page= {{planes_seccion.next_page_number }}">Siguiente</a></li>
-        <li class="page-item"><a class="page-link"href= "?page={{ planes_seccion.paginator.num_pages }}"> Última &raquo </a></li>
+        <li class="page-item"><button type="submit" name="page" class="page-link" value="{{planes_seccion.next_page_number }}">Siguiente</button></li>
+        <li class="page-item"><button type="submit" name="page" class="page-link" value="{{ planes_seccion.paginator.num_pages }}"> Última &raquo </button></li>
         {% endif %}
     </ul> 
 </nav>
-
 <br>
+</form>
 
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="adj-comp"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <ul> </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
+<script type="text/javascript">
+    document.getElementById('download-btn').addEventListener('click', function(e){
+        e.preventDefault()
+
+        let url = '{% url 'git:exportar_planes' %}?'
+        url+='seccion='
+        url+='&adj='+ document.getElementById('id_adjudicacion').value
+        url+='&estado='+ document.getElementById('id_estado_del_plan').value
+        url+='&desde='+ document.getElementById('id_fecha_de_suscripcion_desde').value
+        url+='&hasta='+ document.getElementById('id_fecha_de_suscripcion_hasta').value
+        
+        window.open(url,'_blank')
+    })
+    function comprobModal(url){
+        $.ajax(url).done((response)=>{
+            var data= JSON.parse(response)
+            $('#modal-body ul').empty()
+            data.map((d => 
+                $('#modal-body ul').append(`<li>
+                        <a href='${d.fields.comprobantes}' target='_blank'>${d.fields.comprobantes.split('/').pop()}</a>
+                </li>`)
+               // 
+            ))
+            $('#adj-comp').html(`Comprobantes de pago - Adjudicacion: ${data[0].fields.adjudicacion}`)
+            $('#modal').modal('show')
+        })
+        
+    }
+    $('#ordenar').on('change',()=>{
+        $('#filter-form').submit()
+      })
+      $(document).ready(()=>{
+        $('#ordenar').val('{{ordenar}}')
+      })
+    $('.select-estado').on('change',(e)=>{
+        let plan_id= e.target.dataset.id
+        let estado = e.target.value
+        $.ajax({
+            url:"{% url 'git:cambiar_estado_plan' %}",
+            data:{
+                pk:plan_id,
+                estado:estado
+            }
+        }).done((response)=>{
+            console.log(response)
+            $('#alert-container').append(`
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Estado de plan actualizado.</strong> Los cambios impactaron en la base de datos.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            `)
+        })
+    })
+    $('.select-fact').on('change',(e)=>{
+        let plan_id= e.target.dataset.id
+        let estado = e.target.value
+        $.ajax({
+            url:"{% url 'git:cambiar_fact_plan' %}",
+            data:{
+                pk:plan_id,
+                facturado:estado
+            }
+        }).done((response)=>{
+            console.log(response)
+            $('#alert-container').append(`
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Facturación actualizada.</strong> Los cambios impactaron en la base de datos.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            `)
+        })
+    })
+</script>
 
 {% endblock %} 

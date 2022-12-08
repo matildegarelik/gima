@@ -11,8 +11,9 @@ from .models import Adjudicacion, Cbu_Contribuyente, Comprobantes_de_Pago, Secci
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-# Register your models here.
+from django.contrib.auth.admin import UserAdmin
 
+# Register your models here.
 class Seccion_Resource(resources.ModelResource):
     class Meta:
         model= Seccion
@@ -51,7 +52,7 @@ class Embargos_Resource(resources.ModelResource):
 
 @admin.register(Embargos)
 class Admin_Embargos(ImportExportModelAdmin,admin.ModelAdmin):
-    list_display = ('seccion', 'adjudicacion', 'tipo_de_embargo','clase_embargo', 'estado',
+    list_display = ('adjudicacion', 'tipo_de_embargo','clase_embargo', 'estado',
     'fecha_pedido_git', 'fecha_acreditacion','fecha_pedido_levantamiento','orden_levantamiento','fecha_levantamiento_git', 
     'dia_ingreso_embargo')
 
@@ -70,7 +71,7 @@ class Planes_Resource(resources.ModelResource):
 
 @admin.register(Planes_de_pago)
 class Admin_Planes_de_pago(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('seccion','adjudicacion', 'imp_actualizado', 'fecha_de_suscripcion',
+    list_display = ('adjudicacion', 'imp_actualizado', 'fecha_de_suscripcion',
     'modalidad_de_pago','cantidad_de_cuotas_plan', 'honorarios_mandatario','honorarios_procuracion', 
     'fecha_de_pago_honorarios', 'cuotas_de_honorarios', 'acredito_comprobante','estado_del_plan',
     'fecha_de_cancelacion', 'dia_ingreso_plan' 
@@ -97,3 +98,4 @@ class Admin_Cbu_Contribuyente(ImportExportModelAdmin, admin.ModelAdmin):
     search_fields= ('cuit','banco')
 
     resource_class = Cbu_Resource
+
