@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %} GIMA{% endblock %}
+{% block more_style %}
+.stepper-wrapper {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .stepper-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
+  }
+  
+  .stepper-item::before {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #ccc;
+    width: 100%;
+    top: 20px;
+    left: -50%;
+    z-index: 2;
+  }
+  
+  .stepper-item::after {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #ccc;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    z-index: 2;
+  }
+  
+  .stepper-item .step-counter {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ccc;
+    margin-bottom: 6px;
+  }
+  
+  .stepper-item.active {
+    font-weight: bold;
+  }
+  
+  .stepper-item.completed .step-counter {
+    background-color: #4bb543;
+  }
+  
+  .stepper-item.completed::after {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #4bb543;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    z-index: 3;
+  }
+  
+  .stepper-item:first-child::before {
+    content: none;
+  }
+  .stepper-item:last-child::after {
+    content: none;
+  }
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3>Seguimiento embargo #{{embargo.id}}</h3>
+        </div>
+    </div>
+</div>        
+<br/>
+<div class= 'container'>
+    <div class="col-md-12">
+        <div class="card-header bg-secondary text-center text-white">
+            <h4>Estado: {{embargo.estado}}</h4>
+        </div> 
+        <div class="card bg-light border border-dark">
+            <p class="text-center">Tipo embargo: {{embargo.tipo_de_embargo}} - Clase: {{embargo.clase_embargo}} - Fecha Ingreso: {{embargo.fecha_pedido_git}}</p>
+            <p class="text-center">Adjudicacion: {{embargo.adjudicacion}} - Afectado: {{embargo.adjudicacion.apellido_nombre}} (CUIT: {{embargo.adjudicacion.cuit}}) </p>
+            <br>
+            <div class="stepper-wrapper">
+                <!--<div class="stepper-item">
+                  <div class="step-counter">1</div>
+                  <div class="step-name">Emargo</div>
+                </div>-->
+                <div class="stepper-item {% if embargo.estado == 'Trabado' %} active completed {% elif embargo.estado == 'Lev. Solicitado' or embargo.estado == 'Levantado' or embargo.estado == 'S/Oficio' %} completed {% endif %} ">
+                  <div class="step-counter">1</div>
+                  <div class="step-name">Trabado</div>
+                </div>
+                <div class="stepper-item {% if embargo.estado == 'Lev. Solicitado' %} active completed {% elif embargo.estado == 'Levantado' or embargo.estado == 'S/Oficio' %} completed {% endif %}">
+                  <div class="step-counter">2</div>
+                  <div class="step-name">Lev. Solicitado</div>
+                </div>
+                <div class="stepper-item {% if embargo.estado == 'Levantado' %} active completed {% elif embargo.estado == 'S/Oficio' %} completed {% endif %}">
+                  <div class="step-counter">3</div>
+                  <div class="step-name">Levantado</div>
+                </div>
+                <div class="stepper-item {% if embargo.estado == 'S/Oficio' %} active completed {% endif %}">
+                    <div class="step-counter">4</div>
+                    <div class="step-name">S/Oficio</div>
+                  </div>
+              </div>
+        </div>
+    
+    </div>
+</div>
+
+{% endblock %} 

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %} GIMA {% endblock %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="card-header">
+        <h4 class="card-title">Dominio: {{dominio}} - Seccion: {{seccion}}</h4> 
+      </div>
+</div>
+
+<div class="container">
+    {%for patente in patentes%}
+    <div class="card mt-3">
+        <div class="card-header">
+        <h4 class="card-title">Titular: {{patente.titular}} - CUIT: {{patente.cuit}}</h4> 
+        </div>
+        <div class="card-body">    
+            <div class="row">
+                <div class="col-sm">
+                    <p class="text-md-left"><strong> Dirección:</strong> {{patente.direccion}}</p>
+                    <p class="text-md-left"><strong> Localidad: </strong>{{patente.localidad}}</p>
+                </div>
+                <div class="col-sm">
+                    <p class="text-md-left"><strong> Provincia:</strong> {{patente.provincia}}</p>
+                    <p class="text-md-left"><strong> Código Postal:</strong> {{patente.cpa}}</p>
+                </div>
+                <div class="col-sm">
+                    <p class="text-md-left"><strong> Marca:</strong> {{patente.marca}}</p>
+                    <p class="text-md-left"><strong> Modelo:</strong> {{patente.modelo}}</p>
+                </div>
+            </div>    
+            <div class="row">
+                <div class="col-sm">
+                    <p class="text-md-left"><strong> R.S. Tit./Rad.:</strong>{{patente.rad}}</p> 
+                    <p class="text-md-left"><strong> Estado:</strong> {% if patente.vigente %} Vigente {% else %} No vigente {% endif %}</p> 
+                    
+                </div>
+                <div class="col-sm">
+                    <p class="text-md-left"><strong> Pje. Tit.:</strong> {{patente.pje_tit}}%</p>
+                    
+                </div>
+                <div class="col-sm">
+                    <p class="text-md-left"><strong> Fecha:</strong> {{patente.fecha}}</p>
+                </div>
+                
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm">
+                    <p class="text-md-left"><a class="btn btn-outline-success" href="">Editar</a></button></p>
+                    <p class="text-md-left"><a class="btn btn-outline-danger" href="">Eliminar</a></button></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% endfor %}
+</div>
+
+
+{% endblock %} 

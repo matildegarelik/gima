@@ -143,3 +143,19 @@ class Cbu_Contribuyente(models.Model):
         return str(self.cuit)
     class Meta:
         ordering= ['banco','cuit','impuesto']
+
+class Patente(models.Model):
+    seccion = models.ForeignKey(Seccion, null=True, on_delete=models.SET_NULL)
+    dominio = models.CharField(max_length= 10, null= True, blank=True)
+    vigente=models.BooleanField()
+    titular = models.CharField(max_length=200, blank=False, null=False)
+    cuit = models.CharField(max_length=100, blank=False, null=False)
+    direccion = models.CharField(max_length=200, blank=False, null=False)
+    localidad = models.CharField(max_length=200, blank=False, null=False)
+    provincia = models.CharField(max_length=200, blank=False, null=False)
+    cpa = models.CharField(max_length= 10, null= True, blank=True)
+    marca = models.CharField(max_length= 200, null= True, blank=True)
+    modelo = models.CharField(max_length= 200, null= True, blank=True)
+    rad= models.CharField(max_length= 100, null= True, blank=True)
+    pje_tit=models.FloatField(null= True, blank=True)
+    fecha = models.DateField(null=True, blank=True)

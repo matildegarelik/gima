@@ -13,7 +13,7 @@ from django import forms
 from django.forms import ModelForm, inlineformset_factory, widgets
 from django.forms import ClearableFileInput
 
-from gestion_git.models import Embargos, Planes_de_pago, Seccion, Adjudicacion, Comprobantes_de_Pago
+from gestion_git.models import Embargos, Planes_de_pago, Seccion, Adjudicacion, Comprobantes_de_Pago, Patente
 
 # Crear formulario de usuario
 
@@ -148,3 +148,11 @@ Formulario_Embargo_Git_Set = inlineformset_factory(
     can_delete=False,
     max_num=1,
 )
+
+class Formulario_patente(ModelForm):
+    seccion = forms.ModelChoiceField(queryset=Seccion.objects.filter())
+
+    class Meta:
+        model = Patente
+        fields = ('id','seccion','titular','cuit','dominio')
+        

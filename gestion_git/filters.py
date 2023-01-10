@@ -47,3 +47,13 @@ class Cbu_contribuyente_Filtro(django_filters.FilterSet):
     class Meta:
         model= Cbu_Contribuyente
         fields = ( 'cuit', 'adjudicacion', 'cbu', 'banco')
+
+class Patente_Filtro(django_filters.FilterSet):
+    seccion= CharFilter(field_name="seccion_id", label= 'Nro. Sección')
+    cuit= CharFilter(field_name="cuit", label= 'CUIT',lookup_expr='icontains')
+    titular= CharFilter(field_name="titular", label= 'Titular',lookup_expr='icontains')
+    dominio=CharFilter(field_name="dominio", label= 'Dominio',lookup_expr='icontains')
+
+    class Meta:
+        model= Patente
+        fields = ( 'cuit', 'seccion', 'titular', 'dominio')

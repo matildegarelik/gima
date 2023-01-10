@@ -6,19 +6,21 @@ from django.http import HttpResponseRedirect,HttpResponse, JsonResponse, request
 from django.views import View
 from django.views.generic import TemplateView
 from os import read
+import os
 from django.forms.forms import Form
 from tablib import Dataset
 from django.core import serializers
 import json
-
+from .utils import leer_patentes
+from django.conf import settings
 # FORMULARIOS
 from .forms import Formulario_embargo, Formulario_expedientes_Git, Formulario_planes, Crear_Expediente_Git_Form, Crear_Mandatario_Form, Crear_Formulario_User, Formulario_comprobantes
 
 # MODELOS
-from .models import Cbu_Contribuyente, Comprobantes_de_Pago, Seccion,Adjudicacion,Planes_de_pago,Embargos, UserSeccion
+from .models import Cbu_Contribuyente, Comprobantes_de_Pago, Seccion,Adjudicacion,Planes_de_pago,Embargos, UserSeccion, Patente
 
 # Filtros
-from.filters import Expediente_Git_Filtro, Embargos_Git_Filtro, Planes_Git_Filtro,Cbu_contribuyente_Filtro
+from.filters import Expediente_Git_Filtro, Embargos_Git_Filtro, Planes_Git_Filtro,Cbu_contribuyente_Filtro, Patente_Filtro
 
 # PAGINADOR
 from django.core.paginator import Paginator
@@ -43,7 +45,7 @@ from .decorators import *
 from django.contrib.auth.models import Group
 
 # Emails
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
 # Resources
@@ -298,6 +300,9 @@ def ver_expediente_git(request,pk):
     cbu='-'
     if(cbus.count()):
         cbu=cbus.first()
+    dom_exist = False
+    if expediente_git.dominio and len(Patente.objects.filter(dominio=expediente_git.dominio))>0:
+        dom_exist=True
         
     #filtro_cbu= Cbu_contribuyente_Filtro(request.GET, queryset=cbu)
     #cbu = filtro_cbu.qs
@@ -306,6 +311,7 @@ def ver_expediente_git(request,pk):
     'planes':planes, 
     'embargos':embargos,
     'cbu':cbu,
+    'dom_exist':dom_exist
     }
     return render(request,'gestion_git/expediente_git.html',context)
    
@@ -457,13 +463,36 @@ def nuevo_plan(request, pk):
 def plan_adjudicacion(request,pk):
     adjudicaciones_git = Adjudicacion.objects.get(adjudicacion=pk)
     form_plan = Formulario_planes(instance=adjudicaciones_git, initial={'adjudicaciones_git':adjudicaciones_git})
-    
+    #plan = Planes_de_pago.objects.latest('id').delete()
     if request.method == 'POST':
         form_plan = Formulario_planes(data=request.POST, files=request.FILES)
         if form_plan.is_valid():
             form_plan.save()
-            return redirect('git:users')
+            manda = Seccion.objects.get(seccion=request.POST.get('seccion'))
+            embargo = Embargos.objects.filter(adjudicacion_id=request.POST.get('adjudicacion'))
+            plan = Planes_de_pago.objects.latest('id')
+            mensaje=f'''Se ha creado un plan de pago:
+                -Importe actualizado: ${plan.imp_actualizado}
+                -Modalidad de pago: {plan.modalidad_de_pago}
+                -Fecha de suscripción: {plan.fecha_de_suscripcion}
+                -Honorarios Mandatario: ${plan.honorarios_mandatario} 
+                -Honorarios procuracion: ${plan.honorarios_procuracion}
+                -Cuotas: {plan.cuotas_de_honorarios}
 
+            Acceda al siguiente link para subir los comprobantes: http://gimaapp.herokuapp.com/gestion_git/comprobantes/?adjudicacion={request.POST.get('adjudicacion')}
+            '''
+            if len(embargo)>0:
+                mensaje+=' y al siguiente link para seguir el estado del embargo: http://gimaapp.herokuapp.com/gestion_git/seg-embargo/'+str(embargo[0].id)
+            email = EmailMessage(
+                'Información plan de pago', 
+                mensaje, 
+                manda.e_mail_agip, [request.POST.get('email')]
+            )
+            if plan.archivo_plan:
+                email.attach_file(os.path.join(settings.MEDIA_ROOT,str(plan.archivo_plan)))
+            email.send()
+            return redirect('git:planes')
+        
     return render (request, 'gestion_git/nuevo_plan_adj.html',
     {'form_plan':form_plan,'adjudicacion':adjudicaciones_git}
     )
@@ -836,3 +865,59 @@ def cambiar_fact_plan(request):
         plan.save()
         return HttpResponse('success')
     return HttpResponse('error')
+
+def subir_comprobantes_view(request):
+    if request.method== "POST":
+        comprobante = request.FILES.get('file')
+        Comprobantes_de_Pago.objects.create(comprobantes=comprobante,adjudicacion_id=request.POST['adjudicacion'])
+        return render(request, 'gestion_git/subir_comprobantes.html',{
+            'submitted': True
+        })
+    if Adjudicacion.objects.filter(adjudicacion__exact=request.GET.get('adjudicacion')).exists():
+        adj=Adjudicacion.objects.get(adjudicacion=request.GET.get('adjudicacion'))
+        return render(request, 'gestion_git/subir_comprobantes.html',{
+            'adjudicacion': adj
+        })
+    else:
+        return render(request, 'gestion_git/subir_comprobantes.html',{
+            'adjudicacion': False 
+        })
+
+def seg_embargo(request,pk):
+    return render(request,'gestion_git/seg-embargo.html',{
+        'embargo': Embargos.objects.get(id=pk)
+    })
+
+def subir_patentes(request):
+    secciones = Seccion.objects.all()
+    #Patente.objects.filter().delete()
+    patentes = Patente.objects.all()
+    filtro_patentes = Patente_Filtro(request.GET, queryset=patentes)
+    patentes = filtro_patentes.qs
+    
+
+    # Paginador de hojas
+    p = Paginator(patentes, 25)
+    page = request.GET.get('page')
+    patentes = p.get_page(page)
+    print('paginas:',patentes)
+
+    if request.method== "POST":
+        archivo = request.FILES.get('file')
+        if archivo != None:
+            leer_patentes(archivo,request.POST.get('seccion'))
+            messages.success(request, 'Patentes cargada con éxito')
+        
+    return render(request, 'gestion_git/subir_patentes.html',{
+        'secciones':secciones,
+        'patentes': patentes,
+        'filtro_patentes':filtro_patentes
+     })
+
+def ver_patente(request,dominio):
+    patentes = Patente.objects.filter(dominio=dominio)
+    
+    context={'patentes':patentes, 'dominio':dominio, 'seccion': patentes.first().seccion_id}
+    return render(request,'gestion_git/detalle_patente.html',context)
+ 
+    

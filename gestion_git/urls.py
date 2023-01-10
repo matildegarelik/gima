@@ -68,6 +68,14 @@ urlpatterns = [
     path('password_reset/done/',auth_views.PasswordResetDoneView.as_view(template_name='gestion_git/accounts/accountspassword_reset/done.html'),name='password_reset_done'),
     path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='gestion_git/accounts/password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset/done',auth_views.PasswordResetCompleteView.as_view(template_name='gestion_git/accounts/password_reset_done.html'), name='password_reset_complete'),
+
+    # Para contribuyentes
+    path('comprobantes/', views.subir_comprobantes_view, name="subir_comprobantes_view"),
+    path('seg-embargo/<str:pk>', views.seg_embargo, name="seg_embargo"),
+
+    # Patentes
+    path('subir-patentes/', views.subir_patentes, name="subir_patentes"),
+    path('patente/<str:dominio>/', views.ver_patente, name="ver_patente"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL,  

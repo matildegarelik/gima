@@ -25,7 +25,15 @@
       <div class="row">
         <div class="col-sm">
           <p class="text-md-left"><strong> Nro. Expediente:</strong><a href="https://eje.juscaba.gob.ar/iol-ui/p/expedientes?identificador={{expediente_git.nro_exp}}&fuero=%7B%22codigo%22:%22CAYT%22,%22descripcion%22:%22CONTENCIOSO%20ADMINISTRATIVO%20Y%20TRIBUTARIO%22%7D&tribunal=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&materia=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&objetoJuicio=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&estadoAdministrativo=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&fechaDesde=&fechaHasta=&caratula=&open=false&otraJurisdiccion=&expUACF=&cuij=&anio={{expediente_git.año_exped}}&numero=&codigoDGR=&numeroAdjudicacion=&montoDesde=&montoHasta=&cuijDen=&numeroDen=&sentencia=0&favoritos=0&causas=0&tituloBusqueda=Causas&tipoBusqueda=CAU" class="btn btn-outline-primary btn-sm" target="_bank"> {{expediente_git.nro_exp}}</a></p>  
-          <p class="text-md-left"><strong> Dominio:</strong> <a href="https://eje.juscaba.gob.ar/iol-ui/p/expedientes?identificador=&fuero=%7B%22codigo%22:%22CAYT%22,%22descripcion%22:%22CONTENCIOSO%20ADMINISTRATIVO%20Y%20TRIBUTARIO%22%7D&tribunal=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&materia=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&objetoJuicio=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&estadoAdministrativo=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&fechaDesde=&fechaHasta=&caratula=&open=false&otraJurisdiccion=&expUACF=&cuij=&anio=&numero=&codigoDGR={{expediente_git.dominio}}&numeroAdjudicacion=&montoDesde=&montoHasta=&cuijDen=&numeroDen=&sentencia=0&favoritos=0&causas=0&tituloBusqueda=Causas&tipoBusqueda=CAU"class="btn btn-outline-primary btn-sm" target="_bank">{{expediente_git.dominio}}</a></p>
+          <p class="text-md-left"><strong> Dominio:</strong> 
+            {% if dom_exist %}
+            <a href="{% url 'git:ver_patente' expediente_git.dominio %}" class="btn btn-outline-primary btn-sm" target="_bank">{{expediente_git.dominio}}</a>
+            {% elif expediente_git.dominio and expediente_git.dominio != ' ' %}
+            <a href="https://eje.juscaba.gob.ar/iol-ui/p/expedientes?identificador=&fuero=%7B%22codigo%22:%22CAYT%22,%22descripcion%22:%22CONTENCIOSO%20ADMINISTRATIVO%20Y%20TRIBUTARIO%22%7D&tribunal=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&materia=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&objetoJuicio=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&estadoAdministrativo=%7B%22codigo%22:%22%22,%22descripcion%22:%22%22%7D&fechaDesde=&fechaHasta=&caratula=&open=false&otraJurisdiccion=&expUACF=&cuij=&anio=&numero=&codigoDGR={{expediente_git.dominio}}&numeroAdjudicacion=&montoDesde=&montoHasta=&cuijDen=&numeroDen=&sentencia=0&favoritos=0&causas=0&tituloBusqueda=Causas&tipoBusqueda=CAU"class="btn btn-outline-primary btn-sm" target="_blank">{{expediente_git.dominio}}</a>
+            {% else %}
+            -
+            {% endif %}
+          </p>
         </div>
         <div class="col-sm">
           <p class="text-md-left"><strong> Importe nominal:</strong> $ {{expediente_git.imp_nominal}}</p>
